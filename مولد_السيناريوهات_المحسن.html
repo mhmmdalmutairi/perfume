@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مولد السيناريوهات المالية المحسن - منصة العطور</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #f8f4f1 0%, #fff8f0 100%);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+        }
+        
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .slider-gold::-webkit-slider-thumb {
+            background: linear-gradient(135deg, #d4af37, #ffd700);
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+        }
+        
+        .alert-warning {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: white;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: white;
+        }
+        
+        .alert-info {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            color: white;
+        }
+        
+        .result-excellent {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+        
+        .result-good {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
+        
+        .result-acceptable {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        }
+        
+        .result-poor {
+            background: linear-gradient(135deg, #f97316, #fb923c);
+        }
+        
+        .result-danger {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Header -->
+    <div class="gradient-bg text-white p-6 text-center">
+        <h1 class="text-4xl font-bold mb-2">
+            <i class="fas fa-flask mr-3"></i>
+            مولد السيناريوهات المالية المحسن
+        </h1>
+        <p class="text-xl opacity-90">منصة العطور الفاخرة - أداة التخطيط المالي التفاعلية</p>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        
+        <!-- Quick Scenarios Buttons -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">
+                <i class="fas fa-rocket mr-2"></i>
+                السيناريوهات السريعة
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button onclick="loadScenario('launch')" class="bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg transition">
+                    <i class="fas fa-play-circle mb-2"></i><br>سيناريو الانطلاق
+                </button>
+                <button onclick="loadScenario('free')" class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-lg transition">
+                    <i class="fas fa-gift mb-2"></i><br>البداية المجانية
+                </button>
+                <button onclick="loadScenario('moderate')" class="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg transition">
+                    <i class="fas fa-balance-scale mb-2"></i><br>السيناريو المتوسط
+                </button>
+                <button onclick="generateRandomScenario()" class="bg-orange-500 hover:bg-orange-600 text-white p-4 rounded-lg transition">
+                    <i class="fas fa-dice mb-2"></i><br>سيناريو عشوائي
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- Controls Panel -->
+            <div class="bg-white rounded-lg p-6 card-shadow">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">
+                    <i class="fas fa-sliders-h mr-2"></i>
+                    لوحة التحكم
+                </h2>
+                
+                <div class="space-y-6">
+                    <!-- المعاملات والأسعار -->
+                    <div class="border-b pb-4">
+                        <h3 class="font-bold text-lg mb-4 text-gray-700">المعاملات والأسعار</h3>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">عدد المعاملات الشهرية</label>
+                            <input type="range" id="transactions" min="0" max="5000" value="1500" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>0</span>
+                                <span id="transactionsValue" class="font-bold">1500</span>
+                                <span>5000</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">متوسط سعر العطر (ريال)</label>
+                            <input type="range" id="avgPrice" min="100" max="3000" value="750" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>100</span>
+                                <span id="avgPriceValue" class="font-bold">750</span>
+                                <span>3000</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- العمولات -->
+                    <div class="border-b pb-4">
+                        <h3 class="font-bold text-lg mb-4 text-gray-700">العمولات</h3>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">نسبة عمولة المزادات (%)</label>
+                            <input type="range" id="auctionCommission" min="0" max="25" value="15" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>0%</span>
+                                <span id="auctionCommissionValue" class="font-bold">15%</span>
+                                <span>25%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">نسبة عمولة البيع المباشر (%)</label>
+                            <input type="range" id="directCommission" min="0" max="20" value="10" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>0%</span>
+                                <span id="directCommissionValue" class="font-bold">10%</span>
+                                <span>20%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">نسبة المزادات من إجمالي المبيعات (%)</label>
+                            <input type="range" id="auctionRatio" min="20" max="70" value="40" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>20%</span>
+                                <span id="auctionRatioValue" class="font-bold">40%</span>
+                                <span>70%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- الاشتراكات والخدمات -->
+                    <div class="border-b pb-4">
+                        <h3 class="font-bold text-lg mb-4 text-gray-700">الاشتراكات والخدمات</h3>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">عدد البائعين المشتركين</label>
+                            <input type="range" id="subscribers" min="0" max="2000" value="300" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>0</span>
+                                <span id="subscribersValue" class="font-bold">300</span>
+                                <span>2000</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">رسوم الاشتراك الشهري (ريال)</label>
+                            <input type="range" id="subscriptionFee" min="0" max="1000" value="150" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>0</span>
+                                <span id="subscriptionFeeValue" class="font-bold">150</span>
+                                <span>1000</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">إيرادات الإعلانات الشهرية (ريال)</label>
+                            <input type="range" id="adsRevenue" min="0" max="200000" value="25000" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>0</span>
+                                <span id="adsRevenueValue" class="font-bold">25,000</span>
+                                <span>200,000</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">رسوم التوثيق لكل عطر (ريال)</label>
+                            <input type="range" id="verificationFee" min="0" max="100" value="25" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>0</span>
+                                <span id="verificationFeeValue" class="font-bold">25</span>
+                                <span>100</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">نسبة العطور المحتاجة توثيق (%)</label>
+                            <input type="range" id="verificationRatio" min="0" max="100" value="60" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>0%</span>
+                                <span id="verificationRatioValue" class="font-bold">60%</span>
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- التكاليف -->
+                    <div>
+                        <h3 class="font-bold text-lg mb-4 text-gray-700">التكاليف</h3>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">التكاليف التشغيلية (% من الإيرادات)</label>
+                            <input type="range" id="operatingCosts" min="30" max="80" value="50" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>30%</span>
+                                <span id="operatingCostsValue" class="font-bold">50%</span>
+                                <span>80%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">تكاليف التقنية الشهرية (ريال)</label>
+                            <input type="range" id="techCosts" min="1000" max="50000" value="8000" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>1,000</span>
+                                <span id="techCostsValue" class="font-bold">8,000</span>
+                                <span>50,000</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">رسوم بوابة الدفع (% من المعاملات)</label>
+                            <input type="range" id="paymentGatewayFee" min="0.2" max="5" step="0.1" value="2" 
+                                   class="w-full slider-gold" onchange="updateCalculations()">
+                            <div class="flex justify-between text-sm text-gray-500">
+                                <span>0.2%</span>
+                                <span id="paymentGatewayFeeValue" class="font-bold">2%</span>
+                                <span>5%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Panel -->
+            <div class="space-y-6">
+                
+                <!-- Alerts Panel -->
+                <div id="alertsPanel" class="space-y-3">
+                    <!-- التحذيرات ستظهر هنا -->
+                </div>
+                
+                <!-- Results -->
+                <div class="bg-white rounded-lg p-6 card-shadow">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        النتائج المالية
+                    </h2>
+                    
+                    <div id="scenarioQuality" class="p-4 rounded-lg mb-6 text-white text-center">
+                        <i class="fas fa-star text-2xl mb-2"></i>
+                        <div class="font-bold text-lg" id="qualityText">جاري الحساب...</div>
+                        <div class="text-sm opacity-90" id="qualityDesc">يرجى تعديل القيم لرؤية التقييم</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-gray-800" id="totalRevenue">0</div>
+                            <div class="text-sm text-gray-600">إجمالي الإيرادات السنوية</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-gray-800" id="totalCosts">0</div>
+                            <div class="text-sm text-gray-600">إجمالي التكاليف السنوية</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold" id="netProfit">0</div>
+                            <div class="text-sm text-gray-600">صافي الربح/الخسارة</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-gray-800" id="profitMargin">0%</div>
+                            <div class="text-sm text-gray-600">هامش الربح</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-gray-800" id="breakEven">0</div>
+                            <div class="text-sm text-gray-600">نقطة التعادل (شهور)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-gray-800" id="roi">0%</div>
+                            <div class="text-sm text-gray-600">عائد الاستثمار</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Revenue Breakdown -->
+                    <div class="mb-6">
+                        <h3 class="font-bold text-lg mb-3">تفصيل الإيرادات السنوية</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>عمولة المزادات:</span>
+                                <span id="auctionRevenue" class="font-bold">0 ريال</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>عمولة البيع المباشر:</span>
+                                <span id="directRevenue" class="font-bold">0 ريال</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>اشتراكات البائعين:</span>
+                                <span id="subscriptionRevenue" class="font-bold">0 ريال</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>إيرادات الإعلانات:</span>
+                                <span id="adsRevenueAnnual" class="font-bold">0 ريال</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>رسوم التوثيق:</span>
+                                <span id="verificationRevenue" class="font-bold">0 ريال</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Costs Breakdown -->
+                    <div class="mb-6">
+                        <h3 class="font-bold text-lg mb-3">تفصيل التكاليف السنوية</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>التكاليف التشغيلية:</span>
+                                <span id="operatingCostsAmount" class="font-bold">0 ريال</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>التكاليف التقنية:</span>
+                                <span id="techCostsAmount" class="font-bold">0 ريال</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>رسوم بوابة الدفع:</span>
+                                <span id="paymentGatewayCosts" class="font-bold">0 ريال</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Smart Recommendations -->
+                <div class="bg-white rounded-lg p-6 card-shadow">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        التوصيات الذكية
+                    </h3>
+                    <div id="recommendations" class="space-y-2">
+                        <!-- التوصيات ستظهر هنا -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div class="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white rounded-lg p-6 card-shadow">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">
+                    <i class="fas fa-chart-pie mr-2"></i>
+                    توزيع مصادر الإيرادات
+                </h3>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg p-6 card-shadow">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    الإيرادات مقابل التكاليف
+                </h3>
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Saved Scenarios -->
+        <div class="mt-8 bg-white rounded-lg p-6 card-shadow">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">
+                <i class="fas fa-save mr-2"></i>
+                السيناريوهات المحفوظة
+            </h3>
+            <div class="flex gap-4 mb-4">
+                <button onclick="saveCurrentScenario()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
+                    <i class="fas fa-save mr-2"></i>حفظ السيناريو الحالي
+                </button>
+                <button onclick="clearSavedScenarios()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">
+                    <i class="fas fa-trash mr-2"></i>مسح جميع السيناريوهات
+                </button>
+            </div>
+            <div id="savedScenarios" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- السيناريوهات المحفوظة ستظهر هنا -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let revenueChart = null;
+        let comparisonChart = null;
+        let savedScenariosData = JSON.parse(localStorage.getItem('perfumeSavedScenarios') || '[]');
+        
+        function updateCalculations() {
+            // Get values
+            const transactions = parseInt(document.getElementById('transactions').value);
+            const avgPrice = parseInt(document.getElementById('avgPrice').value);
+            const auctionCommission = parseInt(document.getElementById('auctionCommission').value);
+            const directCommission = parseInt(document.getElementById('directCommission').value);
+            const auctionRatio = parseInt(document.getElementById('auctionRatio').value);
+            const subscribers = parseInt(document.getElementById('subscribers').value);
+            const subscriptionFee = parseInt(document.getElementById('subscriptionFee').value);
+            const adsRevenue = parseInt(document.getElementById('adsRevenue').value);
+            const verificationFee = parseInt(document.getElementById('verificationFee').value);
+            const verificationRatio = parseInt(document.getElementById('verificationRatio').value);
+            const operatingCosts = parseInt(document.getElementById('operatingCosts').value);
+            const techCosts = parseInt(document.getElementById('techCosts').value);
+            const paymentGatewayFee = parseFloat(document.getElementById('paymentGatewayFee').value);
+            
+            // Update display values
+            document.getElementById('transactionsValue').textContent = transactions.toLocaleString();
+            document.getElementById('avgPriceValue').textContent = avgPrice.toLocaleString();
+            document.getElementById('auctionCommissionValue').textContent = auctionCommission + '%';
+            document.getElementById('directCommissionValue').textContent = directCommission + '%';
+            document.getElementById('auctionRatioValue').textContent = auctionRatio + '%';
+            document.getElementById('subscribersValue').textContent = subscribers.toLocaleString();
+            document.getElementById('subscriptionFeeValue').textContent = subscriptionFee.toLocaleString();
+            document.getElementById('adsRevenueValue').textContent = adsRevenue.toLocaleString();
+            document.getElementById('verificationFeeValue').textContent = verificationFee.toLocaleString();
+            document.getElementById('verificationRatioValue').textContent = verificationRatio + '%';
+            document.getElementById('operatingCostsValue').textContent = operatingCosts + '%';
+            document.getElementById('techCostsValue').textContent = techCosts.toLocaleString();
+            document.getElementById('paymentGatewayFeeValue').textContent = paymentGatewayFee + '%';
+            
+            // Calculate revenues
+            const totalSales = transactions * avgPrice * 12;
+            const auctionSales = totalSales * (auctionRatio / 100);
+            const directSales = totalSales - auctionSales;
+            
+            const auctionRevenueAmount = auctionSales * (auctionCommission / 100);
+            const directRevenueAmount = directSales * (directCommission / 100);
+            const subscriptionRevenueAmount = subscribers * subscriptionFee * 12;
+            const adsRevenueAmount = adsRevenue * 12;
+            const verificationRevenueAmount = transactions * (verificationRatio / 100) * verificationFee * 12;
+            
+            const totalRevenue = auctionRevenueAmount + directRevenueAmount + subscriptionRevenueAmount + adsRevenueAmount + verificationRevenueAmount;
+            
+            // Calculate costs
+            const operatingCostsAmount = totalRevenue * (operatingCosts / 100);
+            const techCostsAmount = techCosts * 12;
+            const paymentGatewayCostsAmount = totalSales * (paymentGatewayFee / 100);
+            
+            const totalCostsAmount = operatingCostsAmount + techCostsAmount + paymentGatewayCostsAmount;
+            
+            // Calculate profit metrics
+            const netProfitAmount = totalRevenue - totalCostsAmount;
+            const profitMarginAmount = totalRevenue > 0 ? (netProfitAmount / totalRevenue * 100) : 0;
+            const monthlyProfit = netProfitAmount / 12;
+            const breakEvenMonths = monthlyProfit > 0 ? (2000000 / monthlyProfit) : 0;
+            const roiAmount = (netProfitAmount / 2000000 * 100);
+            
+            // Update display
+            document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString() + ' ريال';
+            document.getElementById('totalCosts').textContent = totalCostsAmount.toLocaleString() + ' ريال';
+            document.getElementById('netProfit').textContent = netProfitAmount.toLocaleString() + ' ريال';
+            document.getElementById('netProfit').className = 'text-2xl font-bold ' + (netProfitAmount >= 0 ? 'text-green-600' : 'text-red-600');
+            document.getElementById('profitMargin').textContent = profitMarginAmount.toFixed(1) + '%';
+            document.getElementById('breakEven').textContent = breakEvenMonths > 0 && breakEvenMonths < 120 ? Math.ceil(breakEvenMonths) + ' شهر' : 'لا تتحقق';
+            document.getElementById('roi').textContent = roiAmount.toFixed(1) + '%';
+            
+            // Update revenue breakdown
+            document.getElementById('auctionRevenue').textContent = auctionRevenueAmount.toLocaleString() + ' ريال';
+            document.getElementById('directRevenue').textContent = directRevenueAmount.toLocaleString() + ' ريال';
+            document.getElementById('subscriptionRevenue').textContent = subscriptionRevenueAmount.toLocaleString() + ' ريال';
+            document.getElementById('adsRevenueAnnual').textContent = adsRevenueAmount.toLocaleString() + ' ريال';
+            document.getElementById('verificationRevenue').textContent = verificationRevenueAmount.toLocaleString() + ' ريال';
+            
+            // Update costs breakdown
+            document.getElementById('operatingCostsAmount').textContent = operatingCostsAmount.toLocaleString() + ' ريال';
+            document.getElementById('techCostsAmount').textContent = techCostsAmount.toLocaleString() + ' ريال';
+            document.getElementById('paymentGatewayCosts').textContent = paymentGatewayCostsAmount.toLocaleString() + ' ريال';
+            
+            // Update scenario quality
+            updateScenarioQuality(netProfitAmount, profitMarginAmount);
+            
+            // Update alerts and recommendations
+            updateAlerts(transactions, auctionCommission, directCommission, techCosts, operatingCosts, netProfitAmount);
+            updateRecommendations(transactions, netProfitAmount, profitMarginAmount, techCosts);
+            
+            // Update charts
+            updateCharts(auctionRevenueAmount, directRevenueAmount, subscriptionRevenueAmount, adsRevenueAmount, verificationRevenueAmount, totalRevenue, totalCostsAmount);
+        }
+        
+        function updateScenarioQuality(netProfit, profitMargin) {
+            const qualityElement = document.getElementById('scenarioQuality');
+            const qualityText = document.getElementById('qualityText');
+            const qualityDesc = document.getElementById('qualityDesc');
+            
+            if (netProfit > 500000 && profitMargin > 30) {
+                qualityElement.className = 'p-4 rounded-lg mb-6 text-white text-center result-excellent';
+                qualityText.textContent = 'ممتاز';
+                qualityDesc.textContent = 'سيناريو استثنائي بأرباح عالية وهامش ربح ممتاز';
+            } else if (netProfit > 100000 && profitMargin > 15) {
+                qualityElement.className = 'p-4 rounded-lg mb-6 text-white text-center result-good';
+                qualityText.textContent = 'جيد';
+                qualityDesc.textContent = 'سيناريو واعد بأرباح معقولة وهامش ربح صحي';
+            } else if (netProfit > 0 && profitMargin > 5) {
+                qualityElement.className = 'p-4 rounded-lg mb-6 text-white text-center result-acceptable';
+                qualityText.textContent = 'مقبول';
+                qualityDesc.textContent = 'سيناريو قابل للتطبيق مع هامش ربح محدود';
+            } else if (netProfit < 0 || profitMargin < 5) {
+                qualityElement.className = 'p-4 rounded-lg mb-6 text-white text-center result-poor';
+                qualityText.textContent = 'ضعيف';
+                qualityDesc.textContent = 'سيناريو يحتاج تحسينات جوهرية';
+            } else {
+                qualityElement.className = 'p-4 rounded-lg mb-6 text-white text-center result-danger';
+                qualityText.textContent = 'خطر';
+                qualityDesc.textContent = 'سيناريو عالي المخاطر مع خسائر كبيرة';
+            }
+        }
+        
+        function updateAlerts(transactions, auctionCommission, directCommission, techCosts, operatingCosts, netProfit) {
+            const alertsPanel = document.getElementById('alertsPanel');
+            alertsPanel.innerHTML = '';
+            
+            const alerts = [];
+            
+            if (transactions < 100) {
+                alerts.push({
+                    type: 'warning',
+                    icon: 'fas fa-exclamation-triangle',
+                    message: 'انتباه: عدد المعاملات أقل من 100 شهرياً قد يعني صعوبة في التشغيل'
+                });
+            }
+            
+            if (auctionCommission < 5 && directCommission < 5) {
+                alerts.push({
+                    type: 'warning',
+                    icon: 'fas fa-coins',
+                    message: 'تحذير: العمولة منخفضة جداً قد لا تغطي التكاليف'
+                });
+            }
+            
+            if (techCosts > 25000) {
+                alerts.push({
+                    type: 'danger',
+                    icon: 'fas fa-server',
+                    message: 'تنبيه: تكاليف تقنية عالية جداً - راجع الخيارات البديلة'
+                });
+            }
+            
+            if (operatingCosts > 70) {
+                alerts.push({
+                    type: 'warning',
+                    icon: 'fas fa-chart-line',
+                    message: 'تحذير: التكاليف التشغيلية عالية جداً - ضروري تحسين الكفاءة'
+                });
+            }
+            
+            if (netProfit > 1000000) {
+                alerts.push({
+                    type: 'success',
+                    icon: 'fas fa-thumbs-up',
+                    message: 'إيجابي: هامش ربح صحي - سيناريو واعد!'
+                });
+            }
+            
+            if (transactions > 2000) {
+                alerts.push({
+                    type: 'info',
+                    icon: 'fas fa-rocket',
+                    message: 'ممتاز: حجم معاملات عالي يدل على نجاح المنصة'
+                });
+            }
+            
+            alerts.forEach(alert => {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert-${alert.type} p-3 rounded-lg flex items-center`;
+                alertDiv.innerHTML = `
+                    <i class="${alert.icon} mr-3"></i>
+                    <span>${alert.message}</span>
+                `;
+                alertsPanel.appendChild(alertDiv);
+            });
+        }
+        
+        function updateRecommendations(transactions, netProfit, profitMargin, techCosts) {
+            const recommendationsPanel = document.getElementById('recommendations');
+            recommendationsPanel.innerHTML = '';
+            
+            const recommendations = [];
+            
+            if (transactions < 500) {
+                const targetTransactions = Math.ceil(transactions * 1.5);
+                recommendations.push(`جرب زيادة عدد المعاملات إلى ${targetTransactions} لتحسين الربحية`);
+            }
+            
+            if (techCosts > 20000) {
+                recommendations.push('خفض التكاليف التقنية باستخدام خدمات السحابة المدفوعة حسب الاستخدام');
+            }
+            
+            if (profitMargin < 20) {
+                recommendations.push('ابدأ بعمولة 7% ثم ارفعها تدريجياً مع نمو المنصة');
+            }
+            
+            if (netProfit < 100000) {
+                recommendations.push('ركز على جذب البائعين من خلال تقديم فترة تجريبية مجانية');
+            }
+            
+            if (netProfit > 500000) {
+                recommendations.push('فكر في التوسع إلى دول خليجية أخرى لزيادة النمو');
+            }
+            
+            recommendations.push('راقب معدل رضا العملاء وحسن الخدمة باستمرار');
+            
+            recommendations.forEach(rec => {
+                const recDiv = document.createElement('div');
+                recDiv.className = 'bg-blue-50 border-l-4 border-blue-400 p-3 text-blue-700';
+                recDiv.innerHTML = `<i class="fas fa-lightbulb mr-2"></i>${rec}`;
+                recommendationsPanel.appendChild(recDiv);
+            });
+        }
+        
+        function updateCharts(auctionRev, directRev, subscriptionRev, adsRev, verificationRev, totalRev, totalCosts) {
+            // Revenue Distribution Chart
+            if (revenueChart) {
+                revenueChart.destroy();
+            }
+            
+            const ctx1 = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(ctx1, {
+                type: 'pie',
+                data: {
+                    labels: ['عمولة المزادات', 'عمولة البيع المباشر', 'اشتراكات البائعين', 'إيرادات الإعلانات', 'رسوم التوثيق'],
+                    datasets: [{
+                        data: [auctionRev, directRev, subscriptionRev, adsRev, verificationRev],
+                        backgroundColor: [
+                            '#d4af37',
+                            '#ffd700',
+                            '#3b82f6',
+                            '#10b981',
+                            '#f59e0b'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Revenue vs Costs Chart
+            if (comparisonChart) {
+                comparisonChart.destroy();
+            }
+            
+            const ctx2 = document.getElementById('comparisonChart').getContext('2d');
+            comparisonChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['الإيرادات', 'التكاليف', 'صافي الربح'],
+                    datasets: [{
+                        data: [totalRev, totalCosts, totalRev - totalCosts],
+                        backgroundColor: [
+                            '#10b981',
+                            '#ef4444',
+                            totalRev - totalCosts >= 0 ? '#3b82f6' : '#f59e0b'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        function loadScenario(type) {
+            switch(type) {
+                case 'launch':
+                    setValues({
+                        transactions: 50,
+                        avgPrice: 400,
+                        auctionCommission: 5,
+                        directCommission: 3,
+                        auctionRatio: 30,
+                        subscribers: 20,
+                        subscriptionFee: 0,
+                        adsRevenue: 2000,
+                        verificationFee: 0,
+                        verificationRatio: 30,
+                        operatingCosts: 80,
+                        techCosts: 5000,
+                        paymentGatewayFee: 2.5
+                    });
+                    break;
+                case 'free':
+                    setValues({
+                        transactions: 100,
+                        avgPrice: 500,
+                        auctionCommission: 0,
+                        directCommission: 0,
+                        auctionRatio: 50,
+                        subscribers: 0,
+                        subscriptionFee: 0,
+                        adsRevenue: 15000,
+                        verificationFee: 0,
+                        verificationRatio: 0,
+                        operatingCosts: 60,
+                        techCosts: 3000,
+                        paymentGatewayFee: 2
+                    });
+                    break;
+                case 'moderate':
+                    setValues({
+                        transactions: 1500,
+                        avgPrice: 750,
+                        auctionCommission: 15,
+                        directCommission: 10,
+                        auctionRatio: 40,
+                        subscribers: 300,
+                        subscriptionFee: 150,
+                        adsRevenue: 25000,
+                        verificationFee: 25,
+                        verificationRatio: 60,
+                        operatingCosts: 50,
+                        techCosts: 8000,
+                        paymentGatewayFee: 2
+                    });
+                    break;
+            }
+            updateCalculations();
+        }
+        
+        function generateRandomScenario() {
+            setValues({
+                transactions: Math.floor(Math.random() * 3000) + 100,
+                avgPrice: Math.floor(Math.random() * 2000) + 300,
+                auctionCommission: Math.floor(Math.random() * 20) + 5,
+                directCommission: Math.floor(Math.random() * 15) + 3,
+                auctionRatio: Math.floor(Math.random() * 40) + 30,
+                subscribers: Math.floor(Math.random() * 800) + 50,
+                subscriptionFee: Math.floor(Math.random() * 400) + 50,
+                adsRevenue: Math.floor(Math.random() * 80000) + 5000,
+                verificationFee: Math.floor(Math.random() * 60) + 10,
+                verificationRatio: Math.floor(Math.random() * 70) + 20,
+                operatingCosts: Math.floor(Math.random() * 40) + 40,
+                techCosts: Math.floor(Math.random() * 30000) + 3000,
+                paymentGatewayFee: (Math.random() * 3 + 1).toFixed(1)
+            });
+            updateCalculations();
+        }
+        
+        function setValues(values) {
+            Object.keys(values).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = values[key];
+                }
+            });
+        }
+        
+        function saveCurrentScenario() {
+            const scenario = {
+                id: Date.now(),
+                name: `سيناريو ${new Date().toLocaleDateString('ar-SA')}`,
+                date: new Date().toLocaleString('ar-SA'),
+                values: {}
+            };
+            
+            const inputs = ['transactions', 'avgPrice', 'auctionCommission', 'directCommission', 'auctionRatio', 
+                           'subscribers', 'subscriptionFee', 'adsRevenue', 'verificationFee', 'verificationRatio',
+                           'operatingCosts', 'techCosts', 'paymentGatewayFee'];
+            
+            inputs.forEach(input => {
+                scenario.values[input] = document.getElementById(input).value;
+            });
+            
+            // Calculate key metrics
+            const netProfit = parseFloat(document.getElementById('netProfit').textContent.replace(/[^\d.-]/g, ''));
+            const profitMargin = parseFloat(document.getElementById('profitMargin').textContent.replace('%', ''));
+            
+            scenario.netProfit = netProfit;
+            scenario.profitMargin = profitMargin;
+            
+            savedScenariosData.push(scenario);
+            if (savedScenariosData.length > 5) {
+                savedScenariosData.shift(); // Keep only last 5 scenarios
+            }
+            
+            localStorage.setItem('perfumeSavedScenarios', JSON.stringify(savedScenariosData));
+            displaySavedScenarios();
+        }
+        
+        function displaySavedScenarios() {
+            const container = document.getElementById('savedScenarios');
+            container.innerHTML = '';
+            
+            savedScenariosData.forEach(scenario => {
+                const scenarioDiv = document.createElement('div');
+                scenarioDiv.className = 'bg-gray-50 p-4 rounded-lg border';
+                scenarioDiv.innerHTML = `
+                    <h4 class="font-bold mb-2">${scenario.name}</h4>
+                    <p class="text-sm text-gray-600 mb-2">${scenario.date}</p>
+                    <p class="text-sm mb-2">صافي الربح: <span class="font-bold ${scenario.netProfit >= 0 ? 'text-green-600' : 'text-red-600'}">${scenario.netProfit.toLocaleString()} ريال</span></p>
+                    <p class="text-sm mb-3">هامش الربح: <span class="font-bold">${scenario.profitMargin.toFixed(1)}%</span></p>
+                    <button onclick="loadSavedScenario(${scenario.id})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mr-2">
+                        <i class="fas fa-upload mr-1"></i>تحميل
+                    </button>
+                    <button onclick="deleteSavedScenario(${scenario.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
+                        <i class="fas fa-trash mr-1"></i>حذف
+                    </button>
+                `;
+                container.appendChild(scenarioDiv);
+            });
+        }
+        
+        function loadSavedScenario(id) {
+            const scenario = savedScenariosData.find(s => s.id === id);
+            if (scenario) {
+                setValues(scenario.values);
+                updateCalculations();
+            }
+        }
+        
+        function deleteSavedScenario(id) {
+            savedScenariosData = savedScenariosData.filter(s => s.id !== id);
+            localStorage.setItem('perfumeSavedScenarios', JSON.stringify(savedScenariosData));
+            displaySavedScenarios();
+        }
+        
+        function clearSavedScenarios() {
+            savedScenariosData = [];
+            localStorage.removeItem('perfumeSavedScenarios');
+            displaySavedScenarios();
+        }
+        
+        // Initialize
+        updateCalculations();
+        displaySavedScenarios();
+    </script>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDgSpigdhKb9aIsMwirY8IQZGl755zmWJPJLsH3a%2BX0Od5mHWdSdbB0vfFApVigY7nb4Gec08nrJzZPzqeOaAyXDBeUx2baj42fTXt6AL765W%2FDBC4n3g5Awg9mt2J%2FullCRrg7KnKD8ZtCUYGtR63H2g9upo1WeXIAi0Tnzt36FyzSRRIEf0m%2FBiIjPhSeE1rKJ4cTmoafaoV3tQOkIgpZuIjvAAgGpaxUuYuTnYM9aMloIQ9d7OH1gxBwSQfCmUmFAZntrW%2F%2BRrt66kaeWzvTHIoV7CWxRbIv4kQPdvax4d5DgPMOpfEG%2BLyrEaTNi0rC%2FP4RWiqnwU00WISlZZgMhq84mAeehJhLOqAO6zoZ24D05YFZILsKdGFHaqeaG%2Br5umgqgqQrlOyd5OJj7%2F0P4fyg9NCitJk%2FDeHOBa8XVoVQEWIvOfJVwLqcwSX9jCzYtx9GJMrDCpUlnPtC0zJqi64m3puSaQXFD%2FVDzr46DdRj57jEyYZF66kQ81k0bcUgGSz6bcnnCNSgUgUq2j3j4%3D";
+        window.__genspark_locale = "en-US";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDgSpigdhKb9aIsMwirY8IQZGl755zmWJPJLsH3a+X0Od5mHWdSdbB0vfFApVigY7nb4Gec08nrJzZPzqeOaAyXDBeUx2baj42fTXt6AL765W/DBC4n3g5Awg9mt2J/ullCRrg7KnKD8ZtCUYGtR63H2g9upo1WeXIAi0Tnzt36FyzSRRIEf0m/BiIjPhSeE1rKJ4cTmoafaoV3tQOkIgpZuIjvAAgGpaxUuYuTnYM9aMloIQ9d7OH1gxBwSQfCmUmFAZntrW/+Rrt66kaeWzvTHIoV7CWxRbIv4kQPdvax4d5DgPMOpfEG+LyrEaTNi0rC/P4RWiqnwU00WISlZZgMhq84mAeehJhLOqAO6zoZ24D05YFZILsKdGFHaqeaG+r5umgqgqQrlOyd5OJj7/0P4fyg9NCitJk/DeHOBa8XVoVQEWIvOfJVwLqcwSX9jCzYtx9GJMrDCpUlnPtC0zJqi64m3puSaQXFD/VDzr46DdRj57jEyYZF66kQ81k0bcUgGSz6bcnnCNSgUgUq2j3j4=";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
